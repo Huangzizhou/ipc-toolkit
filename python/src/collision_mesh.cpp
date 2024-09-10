@@ -312,5 +312,21 @@ void define_collision_mesh(py::module_& m)
             A function that takes two vertex IDs and returns true if the vertices (and faces or edges containing the vertices) can collide.
 
             By default all primitives can collide with all other primitives.
+            )ipc_Qu8mg5v7")
+        .def(
+            "ignore_self_collision", [](CollisionMesh &mesh, const std::vector<int> &ids) {
+                std::vector<bool> mask;
+                mask.assign(mesh.num_vertices(), true);
+                for (int i : ids)
+                    mask[i] = false;
+                
+                mesh.can_collide = [mask](size_t a, size_t b) {
+                    return mask[a] || mask[b];
+                };
+            },
+            R"ipc_Qu8mg5v7(
+            Ignores the collision between any two vertex IDs in the input.
+
+            By default all primitives can collide with all other primitives.
             )ipc_Qu8mg5v7");
 }

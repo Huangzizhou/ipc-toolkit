@@ -63,4 +63,9 @@ bool has_intersections(
     const Eigen::MatrixXd& vertices,
     const BroadPhaseMethod broad_phase_method = DEFAULT_BROAD_PHASE_METHOD);
 
+std::array<int, 5> my_has_intersections(
+    const CollisionMesh& mesh,
+    const Eigen::MatrixXd& vertices,
+    const BroadPhaseMethod broad_phase_method = DEFAULT_BROAD_PHASE_METHOD);
+
 } // namespace ipc

@@ -143,4 +143,70 @@ bool has_intersections(
 
     return false;
 }
+
+std::array<int, 5> my_has_intersections(
+    const CollisionMesh& mesh,
+    const Eigen::MatrixXd& vertices,
+    const BroadPhaseMethod broad_phase_method)
+{
+    assert(vertices.rows() == mesh.num_vertices());
+
+    const double conservative_inflation_radius =
+        1e-6 * world_bbox_diagonal_length(vertices);
+
+    std::shared_ptr<BroadPhase> broad_phase =
+        BroadPhase::make_broad_phase(broad_phase_method);
+    broad_phase->can_vertices_collide = mesh.can_collide;
+
+    broad_phase->build(
+        vertices, mesh.edges(), mesh.faces(), conservative_inflation_radius);
+
+    if (vertices.cols() == 2) {
+        // Need to check segment-segment intersections in 2D
+        std::vector<EdgeEdgeCandidate> ee_candidates;
+
+        broad_phase->detect_edge_edge_candidates(ee_candidates);
+        broad_phase->clear();
+
+        // narrow-phase using igl
+        igl::predicates::exactinit();
+        for (const auto& [ea_id, eb_id] : ee_candidates) {
+            if (igl::predicates::segment_segment_intersect(
+                    vertices.row(mesh.edges()(ea_id, 0)).head<2>(),
+                    vertices.row(mesh.edges()(ea_id, 1)).head<2>(),
+                    vertices.row(mesh.edges()(eb_id, 0)).head<2>(),
+                    vertices.row(mesh.edges()(eb_id, 1)).head<2>())) {
+                return {mesh.edges()(ea_id, 0),
+                        mesh.edges()(ea_id, 1),
+                        mesh.edges()(eb_id, 0),
+                        mesh.edges()(eb_id, 1), -1};
+            }
+        }
+    } else {
+        // Need to check segment-triangle intersections in 3D
+        assert(vertices.cols() == 3);
+
+        std::vector<EdgeFaceCandidate> ef_candidates;
+        broad_phase->detect_edge_face_candidates(ef_candidates);
+        broad_phase->clear();
+
+        for (const auto& [e_id, f_id] : ef_candidates) {
+            if (is_edge_intersecting_triangle(
+                    vertices.row(mesh.edges()(e_id, 0)),
+                    vertices.row(mesh.edges()(e_id, 1)),
+                    vertices.row(mesh.faces()(f_id, 0)),
+                    vertices.row(mesh.faces()(f_id, 1)),
+                    vertices.row(mesh.faces()(f_id, 2)))) {
+                return {mesh.edges()(e_id, 0),
+                        mesh.edges()(e_id, 1),
+                        mesh.faces()(f_id, 0),
+                        mesh.faces()(f_id, 1),
+                        mesh.faces()(f_id, 2)};
+            }
+        }
+    }
+
+    return {-1,-1,-1,-1,-1};
+}
+
 } // namespace ipc
