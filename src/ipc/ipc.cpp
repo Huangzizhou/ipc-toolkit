@@ -176,10 +176,10 @@ std::array<int, 5> my_has_intersections(
                     vertices.row(mesh.edges()(ea_id, 1)).head<2>(),
                     vertices.row(mesh.edges()(eb_id, 0)).head<2>(),
                     vertices.row(mesh.edges()(eb_id, 1)).head<2>())) {
-                return {mesh.edges()(ea_id, 0),
+                return {{mesh.edges()(ea_id, 0),
                         mesh.edges()(ea_id, 1),
                         mesh.edges()(eb_id, 0),
-                        mesh.edges()(eb_id, 1), -1};
+                        mesh.edges()(eb_id, 1), -1}};
             }
         }
     } else {
@@ -197,11 +197,11 @@ std::array<int, 5> my_has_intersections(
                     vertices.row(mesh.faces()(f_id, 0)),
                     vertices.row(mesh.faces()(f_id, 1)),
                     vertices.row(mesh.faces()(f_id, 2)))) {
-                return {mesh.edges()(e_id, 0),
+                return {{mesh.edges()(e_id, 0),
                         mesh.edges()(e_id, 1),
                         mesh.faces()(f_id, 0),
                         mesh.faces()(f_id, 1),
-                        mesh.faces()(f_id, 2)};
+                        mesh.faces()(f_id, 2)}};
             }
         }
     }
