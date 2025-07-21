@@ -147,8 +147,8 @@ bool SweepAndPrune::can_edges_collide(size_t eai, size_t ebi) const
     // Checked by scalable_ccd::sort_and_sweep
     assert(ea0i != eb0i && ea0i != eb1i && ea1i != eb0i && ea1i != eb1i);
 
-    return can_vertices_collide(ea0i, eb0i) || can_vertices_collide(ea0i, eb1i)
-        || can_vertices_collide(ea1i, eb0i) || can_vertices_collide(ea1i, eb1i);
+    return can_edge_edge_collide(eai, ebi) && (can_vertices_collide(ea0i, eb0i) || can_vertices_collide(ea0i, eb1i)
+        || can_vertices_collide(ea1i, eb0i) || can_vertices_collide(ea1i, eb1i));
 }
 
 bool SweepAndPrune::can_face_vertex_collide(size_t fi, size_t vi) const
@@ -158,8 +158,8 @@ bool SweepAndPrune::can_face_vertex_collide(size_t fi, size_t vi) const
     // Checked by scalable_ccd::sort_and_sweep
     assert(vi != f0i && vi != f1i && vi != f2i);
 
-    return can_vertices_collide(vi, f0i) || can_vertices_collide(vi, f1i)
-        || can_vertices_collide(vi, f2i);
+    return can_face_vert_collide(fi, vi) && (can_vertices_collide(vi, f0i) || can_vertices_collide(vi, f1i)
+        || can_vertices_collide(vi, f2i));
 }
 
 bool SweepAndPrune::can_edge_face_collide(size_t ei, size_t fi) const

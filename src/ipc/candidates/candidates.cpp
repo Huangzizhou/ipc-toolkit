@@ -45,6 +45,8 @@ void Candidates::build(
     std::shared_ptr<BroadPhase> broad_phase =
         BroadPhase::make_broad_phase(broad_phase_method);
     broad_phase->can_vertices_collide = mesh.can_collide;
+    broad_phase->can_edge_edge_collide = mesh.can_edge_edge_collide;
+    broad_phase->can_face_vert_collide = mesh.can_face_vert_collide;
     broad_phase->build(vertices, mesh.edges(), mesh.faces(), inflation_radius);
     broad_phase->detect_collision_candidates(dim, *this);
 
@@ -117,6 +119,8 @@ void Candidates::build(
     std::shared_ptr<BroadPhase> broad_phase =
         BroadPhase::make_broad_phase(broad_phase_method);
     broad_phase->can_vertices_collide = mesh.can_collide;
+    broad_phase->can_edge_edge_collide = mesh.can_edge_edge_collide;
+    broad_phase->can_face_vert_collide = mesh.can_face_vert_collide;
     broad_phase->build(
         vertices_t0, vertices_t1, mesh.edges(), mesh.faces(), inflation_radius);
     broad_phase->detect_collision_candidates(dim, *this);

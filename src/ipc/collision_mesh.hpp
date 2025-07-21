@@ -284,6 +284,10 @@ public:
     /// primitives can collide with all other primitives.
     std::function<bool(size_t, size_t)> can_collide = default_can_collide;
 
+    /// These functions are used in the CollisionsBuilder but not used in the BroadPhase
+    std::function<bool(long, long)> can_face_vert_collide = default_can_collide;
+    std::function<bool(long, long)> can_edge_edge_collide = default_can_collide;
+
 protected:
     // -----------------------------------------------------------------------
     // Helper initialization functions
